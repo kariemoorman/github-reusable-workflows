@@ -34,6 +34,11 @@ inputs:
     required: true
     type: string
     default: "baseline"
+  post-pr-comment:
+    description: "Whether to post results as PR comment"
+    required: false
+    type: boolean
+    default: true
   github-token:
     description: "GitHub token for PR comments"
     required: true
@@ -107,7 +112,7 @@ runs:
 
     - name: Comment PR with OWASP ZAP DAST Results
       id: post-pr-comment
-      if: ${{ inputs.post_pr_comment == true && github.event_name == 'pull_request' }}
+      if: ${{ inputs.post-pr-comment == true && github.event_name == 'pull_request' }}
       uses: actions/github-script@v7
       with:
         github-token: ${{ inputs.github-token }}
