@@ -1,9 +1,5 @@
 <h1 align='center'>github-reusable-workflows</h1>
 
-<p align='center'>License: <a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/LICENSE.MD' target='_blank'>GNU Affero General Public License v3.0 (GNU AGPLv3)</a></p>
-
----
-
 <h3>Security Scanning</h3>
 
 <h4><a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/.github/workflows/container_security_scan.yml' target='_blank'>Docker Container Security Scan</a></h4>
@@ -37,3 +33,7 @@ This reusable workflow performs security scanning on Terraform code to identify 
   - TFSec – Analyzes Terraform code for common security issues including misconfigurations, access control, and data handling via a predefined set of rules and policies.
   - Trivy – Scans Terraform configurations for vulnerabilities in both infrastructure-as-code and dependencies, identifying potential risks such as outdated libraries or misconfigurations.
   - Snyk – Performs vulnerability analysis on Terraform configurations and dependencies, providing insights into potential risks and compliance issues.
+
+---
+
+<p align='center'>License: <a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/LICENSE.MD' target='_blank'>GNU Affero General Public License v3.0 (GNU AGPLv3)</a></p>
