@@ -1,0 +1,105 @@
+name: "Snyk Code Scan"
+description: "Scan your repository for code vulnerabilities using Snyk CLI and optionally post results to PR"
+
+inputs:
+  ref:
+    description: 'Git ref to scan'
+    required: false
+    type: string
+    default: ${{ github.ref }}
+  scan-path:
+    description: 'Path to IaC files (Terraform, YAML, etc.)'
+    required: false
+    type: string
+    default: "."
+  severity-threshold:
+    description: "Fail if vulnerabilities at or above this severity exist (low|medium|high|critical)"
+    required: false
+    type: string
+    default: "high"
+  post_pr_comment:
+    description: "Post scan results back to the PR"
+    required: false
+    type: boolean
+    default: true
+  snyk-token:
+    description: "Snyk API token (required for free accounts or non-Enterprise OIDC)"
+    required: true
+    type: string
+  github-token:
+    description: "GitHub token for PR comments"
+    type: boolean
+    required: true
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      id: repo-checkout
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.ref != '' && inputs.ref || github.ref }}
+
+    - name: Install Snyk CLI
+      id: snyk-install
+      shell: bash
+      run: |
+        curl -sL https://downloads.snyk.io/cli/latest/snyk-linux -o snyk
+        chmod +x snyk
+        sudo mv snyk /usr/local/bin/snyk
+
+    - name: Authenticate Snyk CLI
+      id: snyk-auth
+      shell: bash
+      run: snyk auth "${{ inputs.snyk-token }}"
+
+    - name: Run Snyk Code Scan
+      id: snyk-code
+      shell: bash
+      run: |
+        echo "Scanning repository for vulnerabilities"
+
+        # JSON output
+        snyk iac test ${{ inputs.scan-path }} --json > snyk-iac-results.json || true
+
+        # Human-readable output
+        snyk iac test ${{ inputs.scan-path }} > snyk-iac-results.txt || true
+
+    - name: Upload Snyk IaC Scan Results
+      id: upload-results
+      uses: actions/upload-artifact@v6
+      with:
+        name: snyk-iac-results
+        path: |
+          snyk-iac-results.json
+          snyk-iac-results.txt
+        retention-days: 7
+
+    - name: Comment PR with Snyk IaC Results
+      id: post-pr-comment
+      if: ${{ inputs.post_pr_comment == true && github.event_name == 'pull_request' }}
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require('fs');
+
+          let reportText = fs.readFileSync('snyk-iac-results.txt', 'utf8');
+
+          const tipIndex = reportText.indexOf('Tip');
+          if (tipIndex !== -1) {
+            reportText = reportText.slice(0, tipIndex).trim();
+          }
+
+          const body = `### Snyk IaC Scan Results 🛡️
+
+          \`\`\`
+          ${reportText}
+          \`\`\``;
+
+          await github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body
+          });

@@ -1,0 +1,129 @@
+name: "Trivy Container Security Scan"
+description: "Scan Docker image and container for vulnerabilities using Trivy"
+
+inputs:
+  ref:
+    description: 'Git ref to scan'
+    required: false
+    type: string
+  image-name:
+    description: 'Name of Docker Image'
+    required: true
+    type: string
+  dockerfile-path:
+    description: "Filepath to Dockerfile"
+    required: false
+    type: string
+    default: "./Dockerfile"
+  context-path:
+    description: "Directory to send to the Docker daemon"
+    required: false
+    type: string
+    default: "./"
+  fail_on_critical:
+    description: 'Fail workflow if critical vulnerabilities are found'
+    required: false
+    type: boolean
+    default: true
+  post_pr_comment:
+    description: 'Post scan results as a PR comment'
+    required: false
+    type: boolean
+    default: true
+  github-token:
+    description: "GitHub token for PR comments"
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      id: repo-checkout
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.ref != '' && inputs.ref || github.ref }}
+        
+    - name: Build Docker Image
+      id: docker-build
+      shell: bash
+      run: |
+        docker build \
+          -t ${{ inputs.image-name }} \
+          -f "${{ inputs.dockerfile-path }}" \
+          "${{ inputs.context-path }}"
+
+    - name: Trivy Docker Image Scan (JSON)
+      id: trivy-image-scan
+      uses: aquasecurity/trivy-action@0.33.1
+      with:
+        scan-type: image
+        image-ref: ${{ inputs.dockerfile-path }}
+        format: json
+        output: trivy-image-report.json
+        exit-code: 0
+
+    - name: Upload Vulnerability Scan Results
+      id: upload-results
+      uses: actions/upload-artifact@v6
+      with:
+        name: trivy-results
+        path: trivy-image-report.json
+        retention-days: 7
+
+    - name: Fail Build on High/Criticial Vulnerabilities
+      id: scan-status
+      if: ${{ inputs.fail_on_critical == true }}
+      uses: aquasecurity/trivy-action@0.33.1
+      with:
+        scan-type: image
+        format: table
+        scan-ref: ${{ inputs.path }}
+        severity: HIGH,CRITICAL
+        ignore-unfixed: true
+        exit-code: 1
+        skip-setup-trivy: true
+
+    - name: Post Trivy results to PR
+      id: post-pr-comment
+      if: ${{ github.event.pull_request && inputs.post_pr_comment == true }}
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require('fs');
+    
+          // Load both reports if available
+          const imageReport = JSON.parse(fs.readFileSync('trivy-image-report.json', 'utf8'));
+    
+          const extractVulns = (report) =>
+            report.Results?.flatMap(r => r.Vulnerabilities || []) || [];
+    
+          const imageVulns = extractVulns(imageReport);
+    
+          let total = imageVulns.length ;
+    
+          let body = "## 🛡️ Trivy Security Scan Results\n\n";
+    
+          if (total === 0) {
+            body += "✅ **No vulnerabilities found in image or container.**";
+          } else {
+            body += `⚠️ **Total Vulnerabilities: ${total}**\n\n`;
+    
+            const top = [...imageVulns ].slice(0, 20);
+    
+            for (const v of top) {
+              body += `• **${v.Severity}** — ${v.VulnerabilityID}: ${v.Title}\n`;
+            }
+    
+            if (total > 20) {
+              body += `\n… and more. See full results in workflow artifacts.`;
+            }
+          }
+    
+          await github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body
+          });

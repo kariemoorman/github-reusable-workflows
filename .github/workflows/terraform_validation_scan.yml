@@ -1,0 +1,49 @@
+name: "Terraform Validation Scan Reusable Workflow"
+description: "Validate terraform code syntax, style, and plan"
+
+on:
+  workflow_call:
+    ref:
+      description: 'Git ref to scan'
+      required: false
+      type: string
+    scan-path:
+      description: 'Path to IaC files (Terraform, YAML, etc.)'
+      required: false
+      type: string
+      default: "."
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  tflint-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run TFLint Scan
+        id: tflint-scan
+        uses: kariemoorman/github-reusable-workflows/.github/actions/terraform/lint@main
+        with:
+          ref: ${{ inputs.ref }}
+          scan-path: ${{ inputs.directory_path }}
+
+  tf-style-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Terraform Format Scan
+        id: tf-style-scan
+        uses: kariemoorman/github-reusable-workflows/.github/actions/terraform/style@main
+        with:
+          ref: ${{ inputs.ref }}
+          scan-path: ${{ inputs.directory_path }}
+
+  tf-validate-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Terraform Validate Scan
+        id: tf-validate
+        uses: kariemoorman/github-reusable-workflows/.github/actions/terraform/validate@main
+        with:
+          ref: ${{ inputs.ref }}
+          scan-path: ${{ inputs.directory_path }}
