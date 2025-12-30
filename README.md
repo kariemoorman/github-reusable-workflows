@@ -1,11 +1,10 @@
 # github-reusable-workflows
-Github Actions reusable workflows
 
----
+
 
 <h3>Security Scanning</h3>
 
-<h4>Docker Container Security Scan</h4>
+<h4><a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/.github/workflows/container_security_scan.yml' target='_blank'>Docker Container Security Scan</a></h4>
 
 This reusable workflow performs comprehensive security scanning of Docker container images using multiple industry-standard tools:
 
@@ -16,7 +15,7 @@ This reusable workflow performs comprehensive security scanning of Docker contai
   - OWASP ZAP – Conducts dynamic application security testing (DAST) on running containers, detecting vulnerabilities that may be exploitable in live environments.
 
 
-<h4>Repository Security Scan</h4>
+<h4><a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/.github/workflows/repository_security_scan.yml' target='_blank'>Repository Security Scan</a></h4>
 
 This reusable workflow performs comprehensive repository-level security scanning to identify vulnerabilities, misconfigurations, and exposed secrets in source code and dependencies. It supports configurable execution of the following tools:
 
@@ -28,7 +27,7 @@ This reusable workflow performs comprehensive repository-level security scanning
   - CodeQL – Performs static application security testing to detect code-level security flaws across supported languages.
 
 
-<h4>Terraform Security Scan</h4>
+<h4><a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/.github/workflows/terraform_security_scan.yml' target='_blank'>Terraform Security Scan</a></h4>
 
 This reusable workflow performs security scanning on Terraform code to identify vulnerabilities, misconfigurations, and security risks in infrastructure-as-code configurations using the following tools:
 
