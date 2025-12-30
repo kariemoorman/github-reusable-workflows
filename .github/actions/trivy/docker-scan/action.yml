@@ -78,7 +78,7 @@ runs:
       with:
         scan-type: image
         format: table
-        scan-ref: ${{ inputs.path }}
+        scan-ref: ${{ inputs.dockerfile-path }}
         severity: HIGH,CRITICAL
         ignore-unfixed: true
         exit-code: 1
