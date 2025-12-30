@@ -58,7 +58,7 @@ runs:
       uses: aquasecurity/trivy-action@0.33.1
       with:
         scan-type: image
-        image-ref: ${{ inputs.dockerfile-path }}
+        image-ref: ${{ inputs.image-name }}
         format: json
         output: trivy-image-report.json
         exit-code: 0
@@ -78,7 +78,7 @@ runs:
       with:
         scan-type: image
         format: table
-        scan-ref: ${{ inputs.dockerfile-path }}
+        scan-ref: ${{ inputs.image-name }}
         severity: HIGH,CRITICAL
         ignore-unfixed: true
         exit-code: 1
