@@ -1,0 +1,51 @@
+name: "CodeQL SAST Scan"
+description: "Static Application Security Testing (SAST) using GitHub CodeQL"
+
+inputs:
+  ref:
+    description: 'Git ref to scan'
+    required: false
+    type: string
+    default: ${{ github.ref }}
+  language:
+    description: 'Language to scan'
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      id: repo-checkout
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.ref != '' && inputs.ref || github.ref }}
+      
+    - name: Initialize CodeQL
+      id: codeql-initialize
+      uses: github/codeql-action/init@v4
+      with:
+        languages: ${{ inputs.language }}
+
+    - name: Perform CodeQL Analysis
+      id: codeql-scan
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:${{ inputs.language }}"
+
+    - name: Save CodeQL results artifact
+      id: save-results
+      shell: bash
+      run: |
+        if [ -f results.sarif ]; then
+          cp results.sarif codeql-results-${{ inputs.language }}.sarif
+        fi
+
+    - name: Upload CodeQL Scan Results
+      id: upload-results
+      uses: actions/upload-artifact@v6
+      with:
+        name: codeql-results-${{ inputs.language }}
+        path: codeql-results-${{ inputs.language }}.sarif
+        retention-days: 7
+      

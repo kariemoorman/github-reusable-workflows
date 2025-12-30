@@ -1,0 +1,40 @@
+name: "Terraform Validation Scan"
+description: "Run Terraform validate and plan"
+
+inputs:
+  ref:
+    description: 'Git ref to scan'
+    required: false
+    type: string
+  scan-path:
+    description: 'Path to IaC files (Terraform, YAML, etc.)'
+    required: false
+    type: string
+    default: "."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      id: repo-checkout
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.ref != '' && inputs.ref || github.ref }}
+
+    - name: Set Up Terraform
+      id: tf-setup
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      id: tf-init
+      shell: bash
+      working-directory: ${{ inputs.scan-path }}
+      run: terraform init -input=false
+
+    - name: Terraform Validate
+      id: tf-validate
+      shell: bash
+      working-directory: ${{ inputs.scan-path }}
+      run: |
+        terraform validate -no-color
+
