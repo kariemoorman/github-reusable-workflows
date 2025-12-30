@@ -32,9 +32,6 @@ This reusable workflow performs comprehensive repository-level security scanning
 This reusable workflow performs security scanning on Terraform code to identify vulnerabilities, misconfigurations, and security risks in infrastructure-as-code configurations using the following tools:
 
   - Checkov – Performs static analysis of Terraform files for security misconfigurations and vulnerabilities, checking against a wide range of security policies and best practices.
-
   - TFSec – Analyzes Terraform code for common security issues including misconfigurations, access control, and data handling via a predefined set of rules and policies.
-
   - Trivy – Scans Terraform configurations for vulnerabilities in both infrastructure-as-code and dependencies, identifying potential risks such as outdated libraries or misconfigurations.
-
   - Snyk – Performs vulnerability analysis on Terraform configurations and dependencies, providing insights into potential risks and compliance issues.
