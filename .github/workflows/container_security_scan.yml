@@ -172,7 +172,7 @@ jobs:
     if: ${{ inputs.run_grype_scan == true }}
     runs-on: ubuntu-latest
     steps:
-      - name: Run OWASP Docker Scan
+      - name: Run Grype Docker Scan
         uses: kariemoorman/github-reusable-workflows/.github/actions/grype/docker-scan@main
         with:
           ref: ${{ inputs.ref }}
