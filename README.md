@@ -1,6 +1,8 @@
-# github-reusable-workflows
+<h1 align='center'>github-reusable-workflows</h1>
 
+<p align='center'>License: <a href='https://github.com/kariemoorman/github-reusable-workflows/blob/main/LICENSE.MD' target='_blank'>GNU Affero General Public License v3.0 (GNU AGPLv3)</a></p>
 
+---
 
 <h3>Security Scanning</h3>
 
