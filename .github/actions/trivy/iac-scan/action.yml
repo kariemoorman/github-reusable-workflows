@@ -48,7 +48,7 @@ runs:
     - name: Fail Build on High/Criticial Vulnerabilities
       id: scan-status
       if: ${{ inputs.fail_on_critical == true }}
-      uses: aquasecurity/trivy-action@0.33.1
+      uses: aquasecurity/trivy-action@v0.35.0
       with:
         scan-type: config
         format: json
