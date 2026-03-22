@@ -37,7 +37,7 @@ runs:
         
     - name: Run Trivy vulnerability scanner in fs mode
       id: trivy-scan
-      uses: aquasecurity/trivy-action@v0.35.0
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
       with:
         scan-type: 'fs'
         scan-ref: ${{ inputs.path }}
@@ -56,7 +56,7 @@ runs:
     - name: Fail build on High/Criticial Vulnerabilities
       id: scan-status
       if: ${{ inputs.fail_on_critical == true }}
-      uses: aquasecurity/trivy-action@v0.35.0
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
       with:
         scan-type: "fs"
         format: table
