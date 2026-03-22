@@ -55,7 +55,7 @@ runs:
 
     - name: Trivy Docker Image Scan (JSON)
       id: trivy-image-scan
-      uses: aquasecurity/trivy-action@0.33.1
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
       with:
         scan-type: image
         image-ref: ${{ inputs.image-name }}
@@ -74,7 +74,7 @@ runs:
     - name: Fail Build on High/Criticial Vulnerabilities
       id: scan-status
       if: ${{ inputs.fail_on_critical == true }}
-      uses: aquasecurity/trivy-action@v0.35.0
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
       with:
         scan-type: image
         format: table
