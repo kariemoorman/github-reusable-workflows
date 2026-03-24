@@ -144,6 +144,10 @@ jobs:
   jfrog-scan:
     if: ${{ inputs.run_jfrog_scan == true }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
     steps:
       - name: Run JFrog CLI Scan
         id: jfrog-cli-scan
