@@ -98,7 +98,6 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  id-token: write
 
 jobs:
   snyk-scan:
@@ -136,6 +135,10 @@ jobs:
   jfrog-scan:
     if: ${{ inputs.run_jfrog_scan == true }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
     steps:
       - name: Run JFrog Docker Scan
         uses: kariemoorman/github-reusable-workflows/.github/actions/jfrog/docker-scan@main
