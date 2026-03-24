@@ -43,7 +43,7 @@ runs:
 
     - name: Run OWASP Dependency-Check
       id: owasp-dependency-check
-      uses: dependency-check/Dependency-Check_Action@main
+      uses: dependency-check/Dependency-Check_Action@1e54355a8b4c8abaa8cc7d0b70aa655a3bb15a6c
       with:
         path: ${{ inputs.path }}
         format: ${{ inputs.format }}
