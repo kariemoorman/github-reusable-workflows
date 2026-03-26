@@ -147,7 +147,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-      id-token: write
+      #id-token: write
     steps:
       - name: Run JFrog CLI Scan
         id: jfrog-cli-scan
